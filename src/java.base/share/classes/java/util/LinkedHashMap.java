@@ -189,6 +189,11 @@ public class LinkedHashMap<K,V>
     /**
      * HashMap.Node subclass for normal LinkedHashMap entries.
      */
+
+    /**
+     *这个节点重命名为Entry,继承了Node.
+     * 它在一个(key-val)存储进来时,这个存储节点,同时定义了对前后节点的指向,来确保插入时的顺序性
+     */
     static class Entry<K,V> extends HashMap.Node<K,V> {
         Entry<K,V> before, after;
         Entry(int hash, K key, V value, Node<K,V> next) {
@@ -202,11 +207,15 @@ public class LinkedHashMap<K,V>
     /**
      * The head (eldest) of the doubly linked list.
      */
+
+    //这个LinkedHashMap的首节点,越老的节点,越靠近head
     transient LinkedHashMap.Entry<K,V> head;
 
     /**
      * The tail (youngest) of the doubly linked list.
      */
+
+    //这个LinkedHashMap的尾节点
     transient LinkedHashMap.Entry<K,V> tail;
 
     /**
@@ -220,6 +229,11 @@ public class LinkedHashMap<K,V>
     // internal utilities
 
     // link at the end of list
+
+    /**
+     *添加存储node节点的时候,对于node节点的before和after属性进行双向绑定
+     * 同时,对Node[]这个存储结构的head 和tail进行更新
+     */
     private void linkNodeLast(LinkedHashMap.Entry<K,V> p) {
         LinkedHashMap.Entry<K,V> last = tail;
         tail = p;
@@ -253,9 +267,11 @@ public class LinkedHashMap<K,V>
         head = tail = null;
     }
 
+    //重写了HashMap的newNode方法
     Node<K,V> newNode(int hash, K key, V value, Node<K,V> e) {
         LinkedHashMap.Entry<K,V> p =
             new LinkedHashMap.Entry<>(hash, key, value, e);
+        //跟原方法相比,变动在于建立了Link即链表
         linkNodeLast(p);
         return p;
     }
@@ -295,6 +311,8 @@ public class LinkedHashMap<K,V>
             a.before = b;
     }
 
+    //这些方法的重写,在node节点进行添加和查询时,动态的对节点进行放置
+    //可以达到LRU算法
     void afterNodeInsertion(boolean evict) { // possibly remove eldest
         LinkedHashMap.Entry<K,V> first;
         if (evict && (first = head) != null && removeEldestEntry(first)) {
@@ -752,6 +770,9 @@ public class LinkedHashMap<K,V>
             return next != null;
         }
 
+        /**
+         * 这里,在迭代遍历时,通过查找nextNode,node.after来确保遍历的顺序性
+         */
         final LinkedHashMap.Entry<K,V> nextNode() {
             LinkedHashMap.Entry<K,V> e = next;
             if (modCount != expectedModCount)
@@ -789,6 +810,5 @@ public class LinkedHashMap<K,V>
         implements Iterator<Map.Entry<K,V>> {
         public final Map.Entry<K,V> next() { return nextNode(); }
     }
-
 
 }

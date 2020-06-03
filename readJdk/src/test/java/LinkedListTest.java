@@ -1,6 +1,8 @@
 import org.junit.Test;
 
+import java.math.BigDecimal;
 import java.util.LinkedList;
+import java.util.ListIterator;
 
 /**
  * @date:2020/6/1 15:20
@@ -101,6 +103,42 @@ public class LinkedListTest {
         boolean equalsRes = a.equals(b);
 
         boolean equalsRes2 = "a".equals(new String("a"));
+
+    }
+
+    @Test
+    public void test04(){
+        LinkedList<Object> linkedList = new LinkedList<>();
+        linkedList.add("a");
+        linkedList.equals("b");
+        int i = linkedList.hashCode();
+
+    }
+
+    /**简单测试,itr遍历比for遍历慢*/
+    @Test
+    public void iteratorTest(){
+        LinkedList<Object> linkedList = new LinkedList<>();
+        linkedList.add("a");
+        linkedList.add("b");
+        linkedList.add("b");
+        linkedList.add("b");
+
+
+        ListIterator<Object> iterator = linkedList.listIterator();
+        BigDecimal sta = BigDecimal.valueOf(System.currentTimeMillis());
+        while (iterator.hasNext()){
+            System.out.print(iterator.next());
+        }
+        BigDecimal end = BigDecimal.valueOf(System.currentTimeMillis());
+        System.out.println("itr遍历:"+end.subtract(sta).doubleValue());
+
+        BigDecimal sta2 = BigDecimal.valueOf(System.currentTimeMillis());
+        for(Object next :linkedList){
+            System.out.print(next);
+        }
+        BigDecimal end2 = BigDecimal.valueOf(System.currentTimeMillis());
+        System.out.println("for遍历:"+end2.subtract(sta2).doubleValue());
 
     }
 

@@ -478,6 +478,8 @@ public class LinkedList<E>
      * Removes all of the elements from this list.
      * The list will be empty after this call returns.
      */
+
+    /**清空列表,就是将这个链表结构中双向指向切断,当前元素赋值为null,即可*/
     public void clear() {
         // Clearing all of the links between nodes is "unnecessary", but:
         // - helps a generational GC if the discarded nodes inhabit
@@ -1096,6 +1098,8 @@ public class LinkedList<E>
      * @return an array containing all of the elements in this list
      *         in proper sequence
      */
+
+    /**转换成数组,将LinkedList从第一个开始遍历,每个node元素的item赋值给数组*/
     public Object[] toArray() {
         Object[] result = new Object[size];
         int i = 0;
@@ -1143,6 +1147,7 @@ public class LinkedList<E>
      * @throws NullPointerException if the specified array is null
      */
     @SuppressWarnings("unchecked")
+    /**指定返回数组的类型,这里以用到了反射*/
     public <T> T[] toArray(T[] a) {
         if (a.length < size)
             a = (T[])java.lang.reflect.Array.newInstance(

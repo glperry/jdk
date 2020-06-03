@@ -234,6 +234,8 @@ public class HashMap<K,V> extends AbstractMap<K,V>
     /**
      * The default initial capacity - MUST be a power of two.
      */
+
+    /**HashMap初始化构建时的默认容量 1<<4 =10000 =2^4=16*/
     static final int DEFAULT_INITIAL_CAPACITY = 1 << 4; // aka 16
 
     /**
@@ -241,11 +243,14 @@ public class HashMap<K,V> extends AbstractMap<K,V>
      * by either of the constructors with arguments.
      * MUST be a power of two <= 1<<30.
      */
+
     static final int MAXIMUM_CAPACITY = 1 << 30;
 
     /**
      * The load factor used when none specified in constructor.
      */
+
+    /**默认负载系数时0.75*/
     static final float DEFAULT_LOAD_FACTOR = 0.75f;
 
     /**
@@ -468,6 +473,8 @@ public class HashMap<K,V> extends AbstractMap<K,V>
      * Constructs an empty {@code HashMap} with the default initial capacity
      * (16) and the default load factor (0.75).
      */
+
+    /**无参构造,设定负载系数是0.75*/
     public HashMap() {
         this.loadFactor = DEFAULT_LOAD_FACTOR; // all other fields defaulted
     }
@@ -608,6 +615,8 @@ public class HashMap<K,V> extends AbstractMap<K,V>
      *         (A {@code null} return can also indicate that the map
      *         previously associated {@code null} with {@code key}.)
      */
+
+    /**map存key-value,key会生成一个hash(key),进入putVal(...)*/
     public V put(K key, V value) {
         return putVal(hash(key), key, value, false, true);
     }
@@ -622,22 +631,40 @@ public class HashMap<K,V> extends AbstractMap<K,V>
      * @param evict if false, the table is in creation mode.
      * @return previous value, or null if none
      */
+
+    /**
+     * @param hash <-key生成的hash值
+     * @param key
+     * @param value
+     * @param onlyIfAbsent <-默认 false
+     * @param evict <-默认true
+     *首次添加的时候,Node<E>[k,v] table为null
+     */
     final V putVal(int hash, K key, V value, boolean onlyIfAbsent,
                    boolean evict) {
         Node<K,V>[] tab; Node<K,V> p; int n, i;
         if ((tab = table) == null || (n = tab.length) == 0)
+            //无参map实例,首次添加元素,给table初始化为Node<E><k,v>[16],n=16
             n = (tab = resize()).length;
+        //这里,不管hash的值多大,与1111进行位与运算,得到的总是hash的二进制的末4位,不超过16
+        //就算继续扩容,capacity扩容之后,容量n设置也必定1<<x,n-1&hash也同样也不超过n
+        //位移运算的妙处!
         if ((p = tab[i = (n - 1) & hash]) == null)
+            //最终的存储单元是table数组中,数组中的元素为Node<E>,node中有field:hash,key,value,next
             tab[i] = newNode(hash, key, value, null);
         else {
             Node<K,V> e; K k;
+            //这里,如果hash对应的table的index存在node,则比较node的hash和key是否相等,相等则覆盖
             if (p.hash == hash &&
                 ((k = p.key) == key || (key != null && key.equals(k))))
                 e = p;
+            //判断Node节点时不时TreeNode
             else if (p instanceof TreeNode)
                 e = ((TreeNode<K,V>)p).putTreeVal(this, tab, hash, key, value);
             else {
                 for (int binCount = 0; ; ++binCount) {
+                    //node节点没有下一个节点的话
+                    //添加本次的hash,key,value为node的next节点.完成k-v的存储
                     if ((e = p.next) == null) {
                         p.next = newNode(hash, key, value, null);
                         if (binCount >= TREEIFY_THRESHOLD - 1) // -1 for 1st
@@ -659,6 +686,8 @@ public class HashMap<K,V> extends AbstractMap<K,V>
             }
         }
         ++modCount;
+        //每次添加完元素后,会判断Node类型的数组中node节点元素数量是否超过阈值
+        //超过阈值就要扩容.
         if (++size > threshold)
             resize();
         afterNodeInsertion(evict);
@@ -674,6 +703,17 @@ public class HashMap<K,V> extends AbstractMap<K,V>
      *
      * @return the table
      */
+
+    /**
+     * resize()方法在首次调用时第一次调用
+     * ->赋值capacity为16
+     * ->赋值threshold(阈值)为load factor*capacity=16*0.75=12
+     * ->给table赋值为new Node[16]
+     *
+     * resize()方法第二次执行
+     * ->
+     * @return
+     */
     final Node<K,V>[] resize() {
         Node<K,V>[] oldTab = table;
         int oldCap = (oldTab == null) ? 0 : oldTab.length;
@@ -686,6 +726,9 @@ public class HashMap<K,V> extends AbstractMap<K,V>
             }
             else if ((newCap = oldCap << 1) < MAXIMUM_CAPACITY &&
                      oldCap >= DEFAULT_INITIAL_CAPACITY)
+                //因为原先oldCap=16,所以 newCap扩容到oldCap<<1,翻倍
+                //newThr=oldThr<<1,threshold=newThr,threshold也是翻倍
+                //即除了第一次扩容外,后续的每次扩容都是容量翻倍,阈值也翻倍.loadfactor始终为0.75
                 newThr = oldThr << 1; // double threshold
         }
         else if (oldThr > 0) // initial capacity was placed in threshold
@@ -703,6 +746,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
         @SuppressWarnings({"rawtypes","unchecked"})
         Node<K,V>[] newTab = (Node<K,V>[])new Node[newCap];
         table = newTab;
+        //第二次扩容的同时,需要把原数组中的所有数据都转移到新的数组容器中
         if (oldTab != null) {
             for (int j = 0; j < oldCap; ++j) {
                 Node<K,V> e;

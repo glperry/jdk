@@ -975,8 +975,18 @@ public class ArrayList<E> extends AbstractList<E>
     /**
      * An optimized version of AbstractList.Itr
      */
+
+    /**
+     *ArrayList重写迭代的方法是将父类AbstractList的next(itr.get(i))->next(elementData(i))
+     *ArrayList的迭代器,重写了父类AbstractList的
+     *自定义了内部类,Itr去执行迭代器功能:
+     *  ->cursor指针,游标.下一个元素的index
+     *  ->lastRet,最新一个元素的index指向
+     *
+     *  */
     private class Itr implements Iterator<E> {
         int cursor;       // index of next element to return
+        //当前指向元素的index初始化为-1,执行迭代遍历时,lastRet指向原游标index,遍历出数组中元素
         int lastRet = -1; // index of last element returned; -1 if no such
         int expectedModCount = modCount;
 
@@ -988,6 +998,11 @@ public class ArrayList<E> extends AbstractList<E>
         }
 
         @SuppressWarnings("unchecked")
+        /**
+         * cursor=0,lastRet=-1,i=0->cursor=1,返回元素elementData(0)
+         * cursor=1,lastRet=0,i=1->cursor=2,返回元素elementData(1)
+         * 取元素的同时赋值,Nice Operation!
+         */
         public E next() {
             checkForComodification();
             int i = cursor;

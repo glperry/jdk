@@ -1201,6 +1201,8 @@ public final class Integer extends Number
      *
      * @return a hash code value for an {@code int} value.
      */
+
+    /**Integer的hashCode是它本身*/
     public static int hashCode(int value) {
         return value;
     }

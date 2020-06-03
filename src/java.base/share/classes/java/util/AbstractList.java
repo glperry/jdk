@@ -340,6 +340,13 @@ public abstract class AbstractList<E> extends AbstractCollection<E> implements L
         return new ListItr(index);
     }
 
+    /**
+     * AbstractList的迭代器,也是内部类Itr执行
+     * ->cursor游标,指向下个元素的索引
+     * ->lastRet,遍历时当前元素的索引
+     *
+     * 遍历取出next时,直接是List.get(cursor)
+     */
     private class Itr implements Iterator<E> {
         /**
          * Index of element to be returned by subsequent call to next.
@@ -534,6 +541,13 @@ public abstract class AbstractList<E> extends AbstractCollection<E> implements L
      * @param o the object to be compared for equality with this list
      * @return {@code true} if the specified object is equal to this list
      */
+
+    /**
+     *如果等于自己,就true
+     * 如果不等于自己,但是也是List的实例
+     *  ->创建迭代器,迭代遍历里面元素对象,如果相等,则true
+     *  ->如果有迭代器没遍历完,说明长度不同,返回false
+     */
     public boolean equals(Object o) {
         if (o == this)
             return true;
@@ -560,6 +574,15 @@ public abstract class AbstractList<E> extends AbstractCollection<E> implements L
      * method.
      *
      * @return the hash code value for this list
+     */
+
+    /**
+     * 通过List中元素的个数,确定hash算法的频次
+     * 计算公式是31*hashCode+e.hashCode:
+     *  ->如果e为String类型,则执行String.hashCode()
+     *      ->采用的是String中每个字符个数确定hash算法频次
+     *      ->31*hashCode+String.hashCode(),String中字符对应的ASCII码表中数值进行计算.
+     * @return
      */
     public int hashCode() {
         int hashCode = 1;

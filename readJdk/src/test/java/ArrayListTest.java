@@ -162,4 +162,21 @@ public class ArrayListTest {
         }
         return sum; //1个timeUnit
     }
+
+    /**
+     * ArrayList是有序的,Set是无序的,Set无序是因为HashMap无序
+     */
+    @Test
+    public void orderTest(){
+        ArrayList<Object> list = new ArrayList<>();
+        list.add("a");
+        list.add("b");
+        list.add("c");
+
+        Iterator<Object> iterator = list.iterator();
+        while (iterator.hasNext()){
+            System.out.println(iterator.next());
+        }
+
+    }
 }

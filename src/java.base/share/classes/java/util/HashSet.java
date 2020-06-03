@@ -94,6 +94,7 @@ public class HashSet<E>
     @java.io.Serial
     static final long serialVersionUID = -5024744406713321676L;
 
+    /**HashSet的属性/field只有一个,HashMap map*/
     private transient HashMap<E,Object> map;
 
     // Dummy value to associate with an Object in the backing Map
@@ -103,6 +104,8 @@ public class HashSet<E>
      * Constructs a new, empty set; the backing {@code HashMap} instance has
      * default initial capacity (16) and load factor (0.75).
      */
+
+    /**无参构造构建HashSet,实际只是new 了一个HashMap*/
     public HashSet() {
         map = new HashMap<>();
     }
@@ -217,6 +220,11 @@ public class HashSet<E>
      * @return {@code true} if this set did not already contain the specified
      * element
      */
+
+    /**add操作,执行的是map.put(e,value=new Object()),
+     * map集合保持的key为真正使用的数据
+     * value只是空对象,并无实际用处
+     * */
     public boolean add(E e) {
         return map.put(e, PRESENT)==null;
     }
